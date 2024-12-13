@@ -1,0 +1,290 @@
+:root {
+    --primary-color: #ff69b4;
+    --secondary-color: #d3d3d3;
+    --background-color: #ffffff;
+    --text-color: #000000;
+    --error-color: #ff4757;
+    --success-color: #7bed9f;
+    --button-color: #ff69b4;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.container {
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 2rem;
+    width: 90%;
+    max-width: 800px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+h1 {
+    color: var(--primary-color);
+    margin: 0;
+    font-size: 2rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.input-group {
+    display: flex;
+    margin-bottom: 1.5rem;
+}
+
+#youtube-url {
+    flex-grow: 1;
+    padding: 0.75rem;
+    border: 2px solid var(--secondary-color);
+    border-radius: 4px 0 0 4px;
+    font-size: 1rem;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: var(--text-color);
+}
+
+#submit-btn, #summarize-btn {
+    padding: 0.75rem 1.5rem;
+    background-color: var(--button-color);
+    color: white;
+    border: none;
+    align-items: center;
+    justify-content: center;
+    margin-left: 10px;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#submit-btn {
+    border-radius: 0;
+}
+
+#summarize-btn {
+    border-radius: 0 4px 4px 0;
+}
+#summarize-btn svg {
+    width: 16px;
+    height: 16px;
+    display: inline-block; 
+    vertical-align: middle; 
+}
+
+#submit-btn:hover, #summarize-btn:hover {
+    background-color: #fc4ba3;
+}
+
+.transcript-container {
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--secondary-color);
+    border-radius: 8px;
+    padding: 1rem;
+    max-height: 400px;
+    overflow-y: auto;
+    position: relative;
+}
+
+.transcript-actions {
+    position: sticky; 
+    background: none; 
+    display: flex;
+    justify-content: flex-end;
+    top: 0;
+}
+
+#copy-btn, #clear-btn {
+    background: none;
+    border: 1px solid var(--secondary-color); 
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 4px;
+}
+
+#copy-btn:hover, #clear-btn:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+#copy-btn svg, #clear-btn svg {
+    width: 20px;
+    height: 20px;
+    stroke: black;
+}
+body.dark-mode #copy-btn svg {
+    stroke: white;
+    background: none;
+}
+
+body.dark-mode #clear-btn svg {
+    stroke: white;
+    background: none;
+}
+
+#video-title {
+    color: var(--primary-color);
+    margin-top: 0;
+    font-size: 1.5rem;
+    padding-right: 60px;
+}
+
+#transcript {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+.toast {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #d3d3d3;
+    color: black;
+    padding: 1rem;
+    border-radius: 4px;
+    display: none;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: 1s;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+}
+
+input:checked + .slider {
+    background-color: var(--primary-color);
+}
+
+input:checked + .slider:before {
+    transform: translateX(26px);
+}
+
+.slider.round {
+    border-radius: 34px;
+}
+
+.slider.round:before {
+    border-radius: 50%;
+}
+
+.icon {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20px;
+    height: 20px;
+}
+
+.sun-icon {
+    left: 6px;
+    opacity: 1;
+}
+
+.moon-icon {
+    right: 6px;
+    opacity: 0;
+}
+
+input:checked + .slider .sun-icon {
+    opacity: 0;
+}
+
+input:checked + .slider .moon-icon {
+    opacity: 1;
+}
+
+body.dark-mode {
+    --background-color: #1a1a1a;
+    --text-color: #ffffff;
+    --button-color: #d53a97;
+}
+
+body.dark-mode .container {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+body.dark-mode #youtube-url {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode .transcript-container {
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+
+
+@media (max-width: 600px) {
+    .container {
+        padding: 1rem;
+    }
+
+    .input-group {
+        flex-direction: column;
+    }
+
+    #youtube-url, #submit-btn, #summarize-btn {
+        width: 100%;
+        border-radius: 4px;
+        margin-bottom: 0.5rem;
+    }
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--secondary-color);
+    border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--primary-color);
+}
