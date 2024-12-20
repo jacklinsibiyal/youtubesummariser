@@ -9,7 +9,7 @@ from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain.schema import Document 
 import math
 import markdown
-
+import json
 # Load environment variables from .env file
 load_dotenv()
 
@@ -58,7 +58,9 @@ def get_video_title(video_id):
 def get_transcript(video_id):
     try:
         transcript = YouTubeTranscriptApi.get_transcript(video_id)
-        formatted_transcript = format_transcript_with_timestamps(transcript)
+        print(transcript)
+        # formatted_transcript = format_transcript_with_timestamps(transcript)
+        # formatted_transcript = json.dumps(transcript)
 
         # Get the video title using YouTube Data API
         video_title = get_video_title(video_id)
@@ -66,8 +68,8 @@ def get_transcript(video_id):
             video_title = "Unknown Title"
 
         return jsonify({
-            "title": "video_title",
-            "transcript": "formatted_transcript"
+            "title": video_title,
+            # "transcript": formatted_transcript
         })
     except YouTubeTranscriptApi.CouldNotRetrieveTranscript as e:
         return jsonify({"error": "Could not retrieve transcript"}), 500
