@@ -9,11 +9,18 @@ from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain.schema import Document 
 import math
 import markdown
-import json
+import logging
+from flask_cors import CORS
+
+# Set up logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 # Load environment variables from .env file
 load_dotenv()
 
 app = Flask(__name__)
+CORS(app)  # Add this line after creating the Flask app
 
 # Get the API key from the environment
 groq_api_key = os.getenv('GROQ_API_KEY')
@@ -57,26 +64,28 @@ def get_video_title(video_id):
 @app.route('/api/transcript/<video_id>', methods=['GET'])
 def get_transcript(video_id):
     try:
+        logger.info(f"Fetching transcript for video ID: {video_id}")
         transcript = YouTubeTranscriptApi.get_transcript(video_id)
         formatted_transcript = format_transcript_with_timestamps(transcript)
 
-        # Get the video title using YouTube Data API
+        logger.info("Fetching video title")
         video_title = get_video_title(video_id)
         if not video_title:
             video_title = "Unknown Title"
+            logger.warning("Could not fetch video title")
 
         return jsonify({
             "title": video_title,
             "transcript": formatted_transcript
         })
-    except YouTubeTranscriptApi.CouldNotRetrieveTranscript as e:
-        return jsonify({"error": "Could not retrieve transcript"}), 500
     except Exception as e:
+        logger.error(f"Error in get_transcript: {str(e)}")
         return jsonify({"error": str(e)}), 500
 
 @app.route('/api/summarize', methods=['POST'])
 def summarize_transcript():
     try:
+        logger.info("Starting summarisation request")
         data = request.json
         transcript_text = data.get('text')
         video_title = data.get('title')
@@ -110,6 +119,7 @@ def summarize_transcript():
         })
         
     except Exception as e:
+        logger.error(f"Error in summarize_transcript: {str(e)}")
         return jsonify({'error': str(e)}), 500
 
 
@@ -136,4 +146,4 @@ def format_time(seconds):
     return f"{int(hours):02d}:{int(minutes):02d}:{int(seconds):02d}"
 
 if __name__ == '__main__':
-    app.run(debug=True,port=5000)
+    app.run(host='0.0.0.0')  # Remove port specification
