@@ -58,10 +58,8 @@ def get_video_title(video_id):
 def get_transcript(video_id):
     try:
         transcript = YouTubeTranscriptApi.get_transcript(video_id)
-        print(transcript)
-        # formatted_transcript = format_transcript_with_timestamps(transcript)
-        formatted_transcript = json.dumps(transcript)
-
+        formatted_transcript = format_transcript_with_timestamps(transcript)
+        
         # Get the video title using YouTube Data API
         video_title = get_video_title(video_id)
         if not video_title:
