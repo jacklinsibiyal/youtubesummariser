@@ -66,8 +66,8 @@ def get_transcript(video_id):
             video_title = "Unknown Title"
 
         return jsonify({
-            "title": video_title,
-            "transcript": formatted_transcript
+            "title": "video_title",
+            "transcript": "formatted_transcript"
         })
     except YouTubeTranscriptApi.CouldNotRetrieveTranscript as e:
         return jsonify({"error": "Could not retrieve transcript"}), 500
