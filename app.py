@@ -23,7 +23,7 @@ youtube_api_key = os.getenv('YOUTUBE_API_KEY')
 youtube = build('youtube', 'v3', developerKey=youtube_api_key)
 
 # Initialize the LLM model
-llm = ChatGroq(groq_api_key=groq_api_key, model_name="llama-3.1-70b-versatile")
+llm = ChatGroq(groq_api_key=groq_api_key, model_name="llama-3.3-70b-versatile")
 
 # Define the summarization prompt template
 prompt = ChatPromptTemplate.from_template(
