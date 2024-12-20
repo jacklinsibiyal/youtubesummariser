@@ -59,7 +59,7 @@ def get_transcript(video_id):
     try:
         transcript = YouTubeTranscriptApi.get_transcript(video_id)
         formatted_transcript = format_transcript_with_timestamps(transcript)
-        
+
         # Get the video title using YouTube Data API
         video_title = get_video_title(video_id)
         if not video_title:
@@ -69,7 +69,8 @@ def get_transcript(video_id):
             "title": video_title,
             "transcript": formatted_transcript
         })
-   
+    except YouTubeTranscriptApi.CouldNotRetrieveTranscript as e:
+        return jsonify({"error": "Could not retrieve transcript"}), 500
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
