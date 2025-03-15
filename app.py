@@ -11,6 +11,7 @@ import math
 import markdown
 import logging
 from flask_cors import CORS
+import yt_dlp
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -66,21 +67,39 @@ def get_transcript(video_id):
     try:
         logger.info(f"Fetching transcript for video ID: {video_id}")
         transcript = YouTubeTranscriptApi.get_transcript(video_id)
-        formatted_transcript = format_transcript_with_timestamps(transcript)
-
-        logger.info("Fetching video title")
-        video_title = get_video_title(video_id)
-        if not video_title:
-            video_title = "Unknown Title"
-            logger.warning("Could not fetch video title")
-
-        return jsonify({
-            "title": video_title,
-            "transcript": formatted_transcript
-        })
     except Exception as e:
-        logger.error(f"Error in get_transcript: {str(e)}")
-        return jsonify({"error": str(e)}), 500
+        logger.warning(f"YouTubeTranscriptApi failed, falling back to yt-dlp: {str(e)}")
+        try:
+            ydl_opts = {
+                'quiet': True,
+                'skip_download': True,
+                'writesubtitles': True,
+                'subtitleslangs': ['en'],
+                'writeautomaticsub': True
+            }
+            with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+                info_dict = ydl.extract_info(f"https://www.youtube.com/watch?v={video_id}", download=False)
+                subtitles = info_dict.get("subtitles") or info_dict.get("automatic_captions")
+                if subtitles and 'en' in subtitles:
+                    transcript = [{'text': sub['text'], 'start': sub['start'], 'duration': sub['duration']} for sub in subtitles['en']]
+                else:
+                    raise Exception("No subtitles available.")
+        except Exception as yt_dlp_error:
+            logger.error(f"Error fetching transcript from yt-dlp: {str(yt_dlp_error)}")
+            return jsonify({"error": "Could not retrieve transcript"}), 500
+
+    formatted_transcript = format_transcript_with_timestamps(transcript)
+
+    logger.info("Fetching video title")
+    video_title = get_video_title(video_id)
+    if not video_title:
+        video_title = "Unknown Title"
+        logger.warning("Could not fetch video title")
+
+    return jsonify({
+        "title": video_title,
+        "transcript": formatted_transcript
+    })
 
 @app.route('/api/summarize', methods=['POST'])
 def summarize_transcript():
@@ -146,4 +165,4 @@ def format_time(seconds):
     return f"{int(hours):02d}:{int(minutes):02d}:{int(seconds):02d}"
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0')  # Remove port specification
+    app.run(host='0.0.0.0')
