@@ -12,6 +12,7 @@ import markdown
 import logging
 from flask_cors import CORS
 import yt_dlp
+import requests
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -23,9 +24,10 @@ load_dotenv()
 app = Flask(__name__)
 CORS(app)
 
-# Get the API key from the environment
+# Get the API keys from the environment
 groq_api_key = os.getenv('GROQ_API_KEY')
 youtube_api_key = os.getenv('YOUTUBE_API_KEY')
+scraper_api_key = os.getenv('SCRAPER_API_KEY')
 
 # Initialize the YouTube API client
 youtube = build('youtube', 'v3', developerKey=youtube_api_key)
@@ -85,8 +87,17 @@ def get_transcript(video_id):
                 else:
                     raise Exception("No subtitles available.")
         except Exception as yt_dlp_error:
-            logger.error(f"Error fetching transcript from yt-dlp: {str(yt_dlp_error)}")
-            return jsonify({"error": "Could not retrieve transcript"}), 500
+            logger.warning(f"yt-dlp failed, falling back to Scraper API: {str(yt_dlp_error)}")
+            try:
+                scraper_url = f"https://api.scraperapi.com?api_key={scraper_api_key}&url=https://www.youtube.com/watch?v={video_id}"
+                response = requests.get(scraper_url)
+                if response.status_code == 200:
+                    transcript = response.json().get("transcript", [])
+                else:
+                    raise Exception("Scraper API request failed.")
+            except Exception as scraper_error:
+                logger.error(f"Error fetching transcript from Scraper API: {str(scraper_error)}")
+                return jsonify({"error": "Could not retrieve transcript"}), 500
 
     formatted_transcript = format_transcript_with_timestamps(transcript)
 
