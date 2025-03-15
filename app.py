@@ -68,7 +68,7 @@ def get_transcript(video_id):
         logger.info(f"Fetching transcript for video ID: {video_id}")
         transcript = YouTubeTranscriptApi.get_transcript(video_id)
     except Exception as e:
-        logger.warning(f"YouTubeTranscriptApi failed, falling back to yt-dlp: {str(e)}")
+        logger.warning(f"YouTubeTranscriptApi failed, falling back to yt-dlp: {str(e)}") # yt-dlp is a better alternative
         try:
             ydl_opts = {
                 'quiet': True,
