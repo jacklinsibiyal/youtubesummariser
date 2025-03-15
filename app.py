@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 load_dotenv()
 
 app = Flask(__name__)
-CORS(app)  # Add this line after creating the Flask app
+CORS(app)
 
 # Get the API key from the environment
 groq_api_key = os.getenv('GROQ_API_KEY')
